@@ -1,0 +1,10 @@
+# PlatformIO build output and editor cache
+.pio/
+.cache/
+compile_commands.json
+
+# Local history and KiCad working files
+.history/
+*-backups/
+*.kicad_prl
+*.lck
