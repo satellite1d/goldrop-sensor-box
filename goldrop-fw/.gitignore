@@ -48,3 +48,6 @@ venv/
 
 # Local working documentation; not published
 /docs/
+
+# Local task list; not published
+/todo.md
