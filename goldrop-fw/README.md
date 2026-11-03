@@ -45,8 +45,7 @@ pio run -e goldrop -t upload --upload-port PORT
 pio device monitor --port PORT --baud 115200
 ```
 
-Zastąp `PORT` portem swojej płytki. Konfiguracja `goldrop` dotyczy własnej PCB
-z natywnym USB, nie wcześniejszego projektu w `simulation_test/`.
+Zastąp `PORT` portem swojej płytki. Konfiguracja `goldrop` dotyczy własnej PCB z natywnym USB.
 
 ### ESP-IDF
 

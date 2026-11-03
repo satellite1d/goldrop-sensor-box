@@ -9,7 +9,6 @@ w [`goldrop-fw/`](goldrop-fw/). Firmware korzysta z ESP-IDF 6.1 i PlatformIO.
 
 - [Dokumentacja firmware’u i budowania](goldrop-fw/README.md)
 
-Katalog `simulation_test/` zawiera wcześniejsze eksperymenty z płytką i Wokwi.
 Klucze, hasła, bazy SQLite oraz wyniki kompilacji są lokalne i wykluczone z Gita.
 
 ## TODO:

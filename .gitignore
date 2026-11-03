@@ -57,3 +57,7 @@ sdkconfig.goldrop*
 
 # Local working documentation; not published
 docs/
+
+# Local experiments and assistant instructions
+/simulation_test/
+/AGENTS.md
