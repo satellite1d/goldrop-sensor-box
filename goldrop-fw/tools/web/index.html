@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Goldrop — pomiary</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+  <script src="/management.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Goldrop — strona główna"><span class="drop" aria-hidden="true"></span>goldrop<span class="brand-tag">POMIARY</span></a>
+    <span class="refresh-status" id="refresh-status" role="status">Łączenie z serwerem…</span>
+  </header>
+  <div class="layout">
+    <aside class="sidebar" aria-label="Urządzenia">
+      <div class="sidebar-title"><h2>Urządzenia</h2><span id="device-count" class="count">0</span></div>
+      <p class="hint">Wybierz płytkę, aby zobaczyć jej pomiary.</p>
+      <div id="device-list" class="device-list"></div>
+      <p id="no-devices" class="empty-note" hidden>Jeszcze nie ma urządzeń. Po pierwszym zapisanym pomiarze płytka pojawi się tutaj automatycznie.</p>
+      <div class="sidebar-foot">Czasy wyświetlane lokalnie<br><strong id="timezone">—</strong></div>
+    </aside>
+    <main>
+      <nav class="tabs" role="tablist" aria-label="Widok panelu"><button id="tab-measurements" role="tab" aria-selected="true" aria-controls="measurement-panel">Pomiary</button><button id="tab-management" role="tab" aria-selected="false" aria-controls="management-panel">Zarządzanie</button></nav>
+      <div id="measurement-panel" role="tabpanel" aria-labelledby="tab-measurements">
+      <div id="error" class="error" role="alert" hidden></div>
+      <div class="page-heading">
+        <div><p class="eyebrow">MONITORING ŚRODOWISKA</p><h1 id="device-name">Twoje pomiary</h1><p id="device-detail" class="muted">Dane z czujnika wewnętrznego i zewnętrznego</p></div>
+        <div class="heading-actions"><button id="rename" class="button secondary" type="button" disabled>Zmień nazwę</button><button id="refresh" class="button secondary" type="button">Odśwież</button></div>
+      </div>
+      <form id="name-form" class="name-form" hidden>
+        <label for="name-input">Nazwa wybranej płytki</label>
+        <input id="name-input" type="text" maxlength="80" placeholder="Np. Chłodnia 1" autocomplete="off">
+        <p class="hint">Do 80 znaków. Pusta nazwa przywraca wyświetlanie identyfikatora MAC.</p>
+        <div class="heading-actions"><button id="name-save" class="button" type="submit">Zapisz nazwę</button><button id="name-cancel" class="button secondary" type="button">Anuluj</button></div>
+        <p id="name-result" class="hint" role="status"></p>
+      </form>
+      <section class="metrics" aria-label="Ostatni zapisany pomiar">
+        <article class="metric"><p>Temperatura — czujnik wewnętrzny <span class="sensor-dot amber"></span></p><div><strong id="sht">—</strong><span>°C</span></div><small id="sht-status">Oczekiwanie na pomiar</small></article>
+        <article class="metric"><p>Temperatura — czujnik zewnętrzny <span class="sensor-dot green"></span></p><div><strong id="ds">—</strong><span>°C</span></div><small id="ds-status">Oczekiwanie na pomiar</small></article>
+        <article class="metric"><p>Wilgotność — czujnik wewnętrzny <span class="sensor-dot blue"></span></p><div><strong id="rh">—</strong><span>%</span></div><small id="last-measurement">Oczekiwanie na pomiar</small></article>
+      </section>
+      <p id="data-time" class="hint" role="status"></p>
+      <section class="filters" aria-label="Filtry historii">
+        <label>Zakres czasu<select id="period"><option value="1">Ostatnia godzina</option><option value="24" selected>Ostatnie 24 godziny</option><option value="168">Ostatnie 7 dni</option><option value="custom">Własny zakres</option></select></label>
+        <div id="custom-range" class="custom-range" hidden><label>Od<input id="from" type="datetime-local"></label><label>Do<input id="to" type="datetime-local"></label><button id="apply-range" class="button" type="button">Pokaż</button></div>
+        <p id="history-note" class="hint">Widok odświeża się co 10 sekund.</p>
+      </section>
+      <section class="chart-card" aria-labelledby="temperature-title">
+        <div class="card-heading"><h2 id="temperature-title">Temperatura</h2><div class="legend"><span><i class="amber"></i>Czujnik wewnętrzny</span><span><i class="green"></i>Czujnik zewnętrzny</span></div></div>
+        <svg id="temperature-chart" class="chart" viewBox="0 0 1000 240" role="img" aria-label="Historia temperatury"></svg>
+      </section>
+      <section class="chart-card" aria-labelledby="humidity-title">
+        <div class="card-heading"><h2 id="humidity-title">Wilgotność</h2><div class="legend"><span><i class="blue"></i>Czujnik wewnętrzny</span></div></div>
+        <svg id="humidity-chart" class="chart" viewBox="0 0 1000 210" role="img" aria-label="Historia wilgotności"></svg>
+        <p id="chart-note" class="chart-note">Wykresy pokazują pomiary z ustalonym czasem UTC.</p>
+      </section>
+      <section class="history-card" aria-labelledby="history-title">
+        <div class="card-heading"><div><h2 id="history-title">Historia pomiarów</h2><p class="hint">Najnowsze zapisy najpierw. Pomiary bez UTC są filtrowane według czasu odbioru.</p></div><div class="export-actions"><a id="export-range" class="button" href="#" aria-disabled="true">CSV całego zakresu</a><a id="export" class="button secondary" href="#" aria-disabled="true">CSV tej strony</a></div></div>
+        <div class="table-scroll"><table><thead><tr><th scope="col">Czas pomiaru</th><th scope="col">Czujnik wewnętrzny · °C</th><th scope="col">Czujnik zewnętrzny · °C</th><th scope="col">Wilgotność · %</th><th scope="col">Stan czujników</th><th scope="col">Odebrano</th></tr></thead><tbody id="history"></tbody></table></div>
+        <p id="no-history" class="empty-note">Brak pomiarów w wybranym zakresie.</p>
+        <div class="pagination"><span id="page-info" class="hint">0 pomiarów</span><div><button id="previous" class="button secondary" type="button" disabled>Nowsze</button><button id="next" class="button secondary" type="button" disabled>Starsze</button></div></div>
+      </section>
+      </div>
+      <section id="management-panel" role="tabpanel" aria-labelledby="tab-management" hidden>
+        <div class="page-heading"><div><p class="eyebrow">USTAWIENIA URZĄDZEŃ</p><h1>Zarządzanie płytkami</h1><p class="muted">Wybierz jedną lub kilka płytek. Polecenia czekają na ich połączenie z serwerem.</p></div><button id="fleet-refresh" class="button secondary" type="button">Odśwież status</button></div>
+        <p id="fleet-disabled" class="error" hidden>Zarządzanie nie jest włączone. Uruchom odbiornik z opcjami --management-db i --ota-dir według instrukcji serwera.</p>
+        <p id="fleet-error" class="error" role="alert" hidden></p>
+        <p id="fleet-result" class="hint" role="status"></p>
+        <section class="history-card fleet-devices"><div class="card-heading"><h2>Wybierz urządzenia</h2><div class="heading-actions"><button id="fleet-all" class="button secondary" type="button">Zaznacz wszystkie</button><button id="fleet-none" class="button secondary" type="button">Wyczyść wybór</button></div></div>
+          <div class="table-scroll"><table><thead><tr><th scope="col">Wybór</th><th scope="col">Urządzenie</th><th scope="col">Firmware / pomiar co</th><th scope="col">Połączenie i wynik polecenia</th></tr></thead><tbody id="fleet-devices"></tbody></table></div>
+          <p id="fleet-count" class="empty-note">Wybrano 0 płytek.</p>
+        </section>
+        <fieldset id="fleet-actions" class="fleet-actions" disabled>
+          <form id="fleet-ota" class="chart-card"><h2>Aktualizacja firmware’u</h2><p class="hint">Wybierz przygotowane, podpisane wydanie. Zaktualizowane płytki zachowają ustawienia, ale usuną niewysłany bufor pomiarów.</p>
+            <label for="fleet-release">Wydanie firmware’u</label><select id="fleet-release" required></select>
+            <p id="fleet-release-info" class="hint"></p>
+            <label class="check-label"><input id="fleet-ota-confirm" type="checkbox" required> Potwierdzam aktualizację wybranych płytek i usunięcie ich bufora.</label>
+            <button class="button" type="submit">Zleć aktualizację wybranym</button>
+            <p class="hint">Firmware od 0.6.0 otrzymuje polecenie sprawdzenia OTA. Starsze płytki pobiorą wskazane wydanie przy następnym automatycznym sprawdzeniu; automatyka OTA musi być włączona.</p>
+          </form>
+          <form id="fleet-wifi" class="chart-card"><h2>Ustawienia Wi-Fi</h2><p class="hint">Nowe dane dotyczą wszystkich zaznaczonych płytek. Hasło jest przesyłane kanałem zarządzania; nie jest pokazywane w raportach.</p>
+            <label for="fleet-ssid">Nazwa sieci Wi-Fi 2,4 GHz</label><input id="fleet-ssid" type="text" required maxlength="32" autocomplete="off">
+            <label for="fleet-password">Hasło nowej sieci</label><input id="fleet-password" type="password" required minlength="8" maxlength="63" autocomplete="new-password">
+            <label for="fleet-wifi-mode">Kiedy zastosować ustawienia?</label><select id="fleet-wifi-mode"><option value="stage">Przygotuj na później — pozostaw obecną sieć</option><option value="apply">Zastosuj teraz — nowa sieć już działa</option></select>
+            <button class="button" type="submit">Wyślij ustawienia Wi-Fi</button>
+            <p class="hint">Przy zmianie później poczekaj na „Przygotowane” przy każdej płytce. Następnie aktywuj nową sieć albo uzbrój przełączenie po utracie starej. Po uzbrojeniu czekaj na „Uzbrojone”, zanim wyłączysz starą sieć. Próba ma limit 120 s; niepowodzenie przywraca stare ustawienia.</p>
+            <div class="heading-actions"><button id="fleet-activate" class="button secondary" type="button">Aktywuj przygotowane teraz</button><button id="fleet-arm" class="button secondary" type="button">Uzbrój przełączenie po utracie Wi-Fi</button><button id="fleet-cancel" class="button secondary" type="button">Anuluj przygotowane ustawienia</button></div>
+          </form>
+          <form id="fleet-sampling" class="chart-card"><h2>Częstotliwość pomiarów</h2><p class="hint">Wymaga firmware’u 0.6.0 lub nowszego oraz rejestracji zarządzania. Zmiana działa bez restartu i jest zapamiętywana na płytce.</p>
+            <label for="fleet-interval">Wykonuj pomiar co</label><select id="fleet-interval"><option value="10">10 sekund</option><option value="30">30 sekund</option><option value="60">1 minutę</option><option value="300">5 minut</option><option value="900">15 minut</option><option value="3600">1 godzinę</option></select>
+            <button class="button" type="submit">Zapisz interwał dla wybranych</button><p class="hint">Wartość w tabeli pochodzi z raportu urządzenia. „W kolejce” oznacza oczekiwanie, nie potwierdzenie zmiany. Odświeżanie strony pozostaje niezależne od pomiarów.</p>
+          </form>
+        </fieldset>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

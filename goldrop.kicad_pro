@@ -555,7 +555,6 @@
     },
     "net_colors": {
       "+3.3V": "rgb(48, 255, 68)",
-      "+5V": "rgb(255, 145, 0)",
       "/+230V L": "rgb(255, 1, 30)",
       "/+230V N": "rgb(255, 0, 15)",
       "/BOOT": "rgb(101, 255, 251)",
@@ -677,6 +676,7 @@
       "netlist": "",
       "plot": "",
       "specctra_dsn": "",
+      "step": "",
       "vrml": ""
     },
     "page_layout_descr_file": ""
@@ -871,7 +871,7 @@
         "uuid": "5cc84ebd-ff63-406a-ad83-740c53f3fc0c"
       }
     ],
-    "used_designators": "J4-5,SDA1,SCL1,RESET1,GND1-2,TP1-23,BOOT1,H1-4",
+    "used_designators": "H1-4,BOOT1,TP1-23,GND1-2,RESET1,SCL1,SDA1,J4-5",
     "variants": []
   },
   "sheets": [

@@ -1,0 +1,3 @@
+#pragma once
+// Public verification key only. Private signing material never enters the build.
+inline constexpr char kOtaVerificationKey[] = R"goldrop_ota(@GOLDROP_OTA_PUBLIC_KEY@)goldrop_ota";

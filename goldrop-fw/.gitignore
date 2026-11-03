@@ -1,0 +1,50 @@
+/build/
+/.pio/
+/sdkconfig
+/sdkconfig.old
+/sdkconfig.*.old
+/sdkconfig.goldrop
+/sdkconfig.goldrop_uart
+/managed_components/
+/compile_commands.json
+/.cache/
+__pycache__/
+/secrets/
+/config/ota_public_key.pem
+
+# Local Python environments, caches and secrets
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.py[cod]
+.env
+.env.*
+!.env.example
+
+# Runtime data and generated artifacts
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+*.db
+*.db-*
+*.log
+*.bin
+*.elf
+*.map
+
+# Private keys and local signing identity
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Local editor settings
+.vscode/
+.idea/
+.DS_Store
+
+# Local working documentation; not published
+/docs/

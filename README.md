@@ -1,6 +1,17 @@
 # goldrop-sensor-box
 Temperature and humidity sensor through wifi with 230VAC power input.
 
+
+## Firmware i panel pomiarów
+
+Bieżący firmware **0.6.1** dla ESP32-C3, narzędzia serwera i panel WWW znajdują się
+w [`goldrop-fw/`](goldrop-fw/). Firmware korzysta z ESP-IDF 6.1 i PlatformIO.
+
+- [Dokumentacja firmware’u i budowania](goldrop-fw/README.md)
+
+Katalog `simulation_test/` zawiera wcześniejsze eksperymenty z płytką i Wokwi.
+Klucze, hasła, bazy SQLite oraz wyniki kompilacji są lokalne i wykluczone z Gita.
+
 ## TODO:
 bezpiecznik topikowy,
 MOV 275 VAC,  - poczytac o tym wiecej

@@ -8,3 +8,52 @@ compile_commands.json
 *-backups/
 *.kicad_prl
 *.lck
+
+# Generated build trees and fetched dependencies (all subprojects)
+build/
+managed_components/
+
+# Python environments and cache
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Device credentials, signing keys and local environment
+secrets/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Runtime databases, logs and compiled firmware
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+*.db
+*.db-*
+*.log
+*.bin
+*.elf
+*.map
+
+# Generated ESP-IDF configuration; keep sdkconfig.defaults
+sdkconfig
+sdkconfig.old
+sdkconfig.*.old
+sdkconfig.goldrop*
+
+# Local editor and OS files
+.vscode/
+.idea/
+.DS_Store
+
+# Local working documentation; not published
+docs/

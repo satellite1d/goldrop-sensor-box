@@ -1,0 +1,22 @@
+{
+  "name": "Goldrop ESP32-C3-WROOM-02-N4",
+  "vendor": "Goldrop",
+  "url": "https://www.espressif.com/en/products/modules/esp32-c3",
+  "frameworks": ["espidf"],
+  "build": {
+    "mcu": "esp32c3",
+    "f_cpu": "160000000L",
+    "f_flash": "40000000L",
+    "flash_mode": "dio"
+  },
+  "upload": {
+    "flash_size": "4MB",
+    "maximum_size": 4194304,
+    "maximum_ram_size": 327680,
+    "require_upload_port": true,
+    "speed": 460800
+  },
+  "debug": {
+    "openocd_target": "esp32c3.cfg"
+  }
+}
