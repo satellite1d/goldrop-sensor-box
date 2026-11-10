@@ -4206,7 +4206,7 @@
 	)
 	(text "ESP32-C3-WROOM-02"
 		(exclude_from_sim no)
-		(at 175.768 55.88 0)
+		(at 207.264 139.446 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -8703,10 +8703,10 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
+		(in_pos_files no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "4f203b7e-1e05-4f4f-9ff6-fe84b121516e")
 		(property "Reference" "J2"
