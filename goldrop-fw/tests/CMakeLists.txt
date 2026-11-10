@@ -105,3 +105,8 @@ target_include_directories(goldrop_sampling_store_tests PRIVATE nvs_compat socke
     ../components/model/include ../components/storage/include)
 target_include_directories(goldrop_sampling_store_tests PRIVATE ../components/ota/include)
 add_test(NAME goldrop_sampling_store COMMAND goldrop_sampling_store_tests)
+
+if(UNIX AND Python3_Interpreter_FOUND)
+    add_test(NAME goldrop_environment COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_environment.py)
+    set_tests_properties(goldrop_environment PROPERTIES ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/../build/management-deps")
+endif()

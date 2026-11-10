@@ -11,6 +11,8 @@ Current firmware 0.6.1 for ESP32-C3 using ESP-IDF 6.1 and PlatformIO.
 more info in [`goldrop-fw/`](goldrop-fw/) 
 
 ## Schematic
+
+Pliki schematu, PCB i bibliotek: [KiCad/](KiCad/).
 <img width="3508" height="2480" alt="image" src="https://github.com/user-attachments/assets/ae6e2b10-bccb-43a4-8a64-8e0a54231b27" />
 
 ## PCB design

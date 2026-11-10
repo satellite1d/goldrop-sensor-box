@@ -75,39 +75,92 @@ Rejestrację kanału zarządzania obsługuje `tools/provision_management.py --he
 
 ## Serwer i panel
 
+Skrypty wymagają Linux, Python 3.10+ oraz OpenSSH na komputerze użytkownika.
+Paczka serwera zawiera oba procesy, panel i skrypty sterujące:
+
 ```sh
 python3 tools/package_management_server.py
+scp build/goldrop-management.tar.gz USER@SERVER:~/
 ```
 
-Paczka `build/goldrop-management.tar.gz` zawiera serwer, moduły i pliki strony;
-nie zawiera baz ani kluczy. Serwer wymaga Python 3.10+. Sam odbiornik pomiarów
-korzysta z biblioteki standardowej; zarządzanie wymaga `requirements-management.txt`.
+Na serwerze rozpakuj paczkę. Przy pierwszej instalacji przygotuj też venv:
 
 ```sh
-python3 tools/serve_measurements.py \
-  --db /path/to/private/measurements.sqlite serve \
-  --tcp-port 54321 --web-port 8080
+mkdir -p ~/goldrop-management
+tar -xzf ~/goldrop-management.tar.gz -C ~/goldrop-management
+python3 -m venv ~/goldrop-management/venv
+~/goldrop-management/venv/bin/python -m pip install \
+  -r ~/goldrop-management/requirements-management.txt
 ```
 
-Katalog baz musi być prywatny (uprawnienia `700`). Panel nasłuchuje na
-`127.0.0.1:8080`; dostęp z innego komputera zapewnia tunel SSH:
+Jeśli tworzenie venv zgłasza brak `ensurepip`, na Ubuntu zainstaluj systemowy pakiet
+`python3-venv` i ponów tworzenie środowiska. Istniejące bazy oraz klucze zachowaj.
+Skrypty startowe sprawdzają interpreter i zależności; nie instalują pakietów systemowych.
+
+### Jedno polecenie z komputera
+
+W katalogu `goldrop-fw`:
 
 ```sh
-ssh -N -L 127.0.0.1:8080:127.0.0.1:8080 USER@SERVER
+./tools/goldrop-client.sh start --host USER@SERVER
 ```
 
-Otwórz `http://127.0.0.1:8080/`. Aby włączyć zakładkę Zarządzanie, uruchom odbiornik
-Pythonem z venv i dodaj `--management-db /path/to/private/devices.sqlite`
-oraz `--ota-dir /path/to/ota`. Osobny proces obsługuje wymiany z urządzeniami i OTA:
+Polecenie uruchamia przez SSH brakujące usługi serwera, sprawdza ich porty/API,
+a następnie zestawia tunel i wypisuje adres **http://127.0.0.1:8080/**.
+Uwierzytelnienie SSH korzysta ze zwykłych kluczy, agenta lub interaktywnego hasła;
+żadne hasło SSH nie jest zapisywane przez skrypt.
 
 ```sh
-.venv/bin/python tools/manage_devices.py \
-  --db /path/to/private/devices.sqlite serve \
-  --port 8000 --ota-dir /path/to/ota
+./tools/goldrop-client.sh status --host USER@SERVER
+./tools/goldrop-client.sh restart --host USER@SERVER
+./tools/goldrop-client.sh stop --host USER@SERVER
 ```
 
-Rejestr musi zawierać klucze sparowanych urządzeń. Obie usługi używają tego samego
-pliku `devices.sqlite`; baza `measurements.sqlite` ma odrębny format.
+`status` sprawdza serwer i lokalny tunel. `restart` restartuje usługi serwera
+oraz tunel. `stop` zamyka wyłącznie lokalny tunel — odbiór pomiarów na serwerze trwa dalej.
+Opcja `--tunnel-only` pomija polecenia na serwerze; `--local-port 8081` wybiera
+inny lokalny port przeglądarki. Przy innej instalacji serwera podaj
+`--remote-script SCIEZKA/goldrop_env.py` (ścieżka względna do katalogu domowego SSH
+lub bezwzględna; bez skrótu `~/`).
+
+### Polecenia bezpośrednio na serwerze
+
+```sh
+~/goldrop-management/goldrop-server.sh start
+~/goldrop-management/goldrop-server.sh status
+~/goldrop-management/goldrop-server.sh restart
+~/goldrop-management/goldrop-server.sh stop
+```
+
+| Proces | Porty | Kontrola |
+| --- | --- | --- |
+| Zarządzanie i OTA | 8000 | Proces, konfiguracja, właściciel portu i odpowiedź HTTP |
+| Odbiornik pomiarów i panel | 54321, 8080 | Proces, konfiguracja, oba nasłuchy i API SQLite/zarządzania |
+| Tunel SSH na komputerze | lokalny 8080 | Sterowanie OpenSSH, zgodność celu i API panelu |
+
+Ponowny `start` zachowuje działające, zgodne procesy, także uruchomione wcześniej
+ręcznie przez `nohup`. Starszy odbiornik bez flag zarządzania wymaga `restart`.
+Konflikt z innym programem jest zgłaszany z portem i dostępnym PID-em; skrypt
+nie zatrzymuje obcych procesów. Nieudany start wycofuje tylko nowo uruchomione usługi.
+
+Domyślne dane to `~/goldrop-private/devices.sqlite`,
+`~/goldrop-private/measurements.sqlite` oraz `~/goldrop-ota/`.
+Katalog baz jest prywatny (`700`); pierwsze uruchomienie może utworzyć pusty
+rejestr zarządzania, ale parowanie/import kluczy urządzeń pozostaje osobnym krokiem.
+Brak globalnego `manifest.json` jest informacją, a nie błędem startu usługi.
+Logi trafiają do `~/goldrop-management.log` i `~/goldrop-measurements.log`.
+Stan blokad i gniazda tunelu jest w `~/.local/state/goldrop/`.
+
+Serwerowy `--help` opisuje opcje `--private-dir`, `--ota-dir`, `--log-dir`,
+`--python` oraz porty. Przy niestandardowych portach podaj te same wartości
+w skrypcie lokalnym i serwerowym. Inne katalogi danych ustawiaj bezpośrednio
+na serwerze, a klienta uruchamiaj z `--tunnel-only`.
+
+Usługi działają w tle po zamknięciu SSH. Po restarcie serwera ponów `start`;
+skrypty nie instalują usług systemd ani ciągłego nadzoru po awarii.
+Kody wyjścia: `0` — sukces/zdrowe środowisko, `1` — brak usługi, konflikt lub błąd,
+`2` — niepoprawne argumenty. Sam odbiornik bez zarządzania nadal można uruchomić
+przez `python3 tools/serve_measurements.py --help`.
 
 ## Wydania OTA
 

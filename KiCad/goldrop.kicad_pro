@@ -871,7 +871,7 @@
         "uuid": "5cc84ebd-ff63-406a-ad83-740c53f3fc0c"
       }
     ],
-    "used_designators": "H1-4,BOOT1,TP1-23,GND1-2,RESET1,SCL1,SDA1,J4-5",
+    "used_designators": "C10,U6,H1-4,BOOT1,TP1-23,GND1-2,RESET1,SCL1,SDA1,J4-5",
     "variants": []
   },
   "sheets": [

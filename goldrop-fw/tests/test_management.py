@@ -184,7 +184,7 @@ class RegistryTests(unittest.TestCase):
         self.assertEqual(other.key(MAC),self.key)
         archive = package(self.root / "server.tar.gz")
         with tarfile.open(archive) as source:
-            self.assertEqual(set(source.getnames()),{"manage_devices.py","management_protocol.py","management_registry.py","provision_wifi.py","requirements-management.txt","device_identity.py","firmware_catalog.py","fleet_management.py","measurement_store.py","telemetry_protocol.py","serve_measurements.py","web/index.html","web/app.js","web/management.js","web/styles.css"})
+            self.assertEqual(set(source.getnames()),{"goldrop_env.py","goldrop-server.sh","goldrop-client.sh","manage_devices.py","management_protocol.py","management_registry.py","provision_wifi.py","requirements-management.txt","device_identity.py","firmware_catalog.py","fleet_management.py","measurement_store.py","telemetry_protocol.py","serve_measurements.py","web/index.html","web/app.js","web/management.js","web/styles.css"})
 
     def test_usb_enrollment_no_secret_output(self):
         class Usb:

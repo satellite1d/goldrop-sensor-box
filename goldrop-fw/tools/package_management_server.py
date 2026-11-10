@@ -10,6 +10,9 @@ def package(output):
     tools = Path(__file__).resolve().parent
     names = (
         "manage_devices.py",
+        "goldrop_env.py",
+        "goldrop-server.sh",
+        "goldrop-client.sh",
         "management_registry.py",
         "management_protocol.py",
         "provision_wifi.py",
